@@ -1,19 +1,21 @@
 using UnityEngine;
 using Unity.Services.Leaderboards;
+using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
     private int score;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public TextMeshProUGUI scoreDisplay;
+
     void Start()
     {
-        
+        score = 0;
+        scoreDisplay.text = (score).ToString();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        scoreDisplay.text = (score).ToString();
     }
 
     public void AddScore(int points)

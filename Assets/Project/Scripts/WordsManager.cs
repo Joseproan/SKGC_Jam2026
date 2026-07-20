@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 public class WordsManager : MonoBehaviour
 {
     private TextAsset dictionary;
@@ -12,9 +14,10 @@ public class WordsManager : MonoBehaviour
     
     public TextMeshProUGUI wordDisplay;
     public TextMeshProUGUI downDisplay;
-    public TextMeshProUGUI scoreDisplay;
     public TextMeshProUGUI timerDisplay;
+    public Image timerSlider;
     [SerializeField] private TMP_InputField inputField;
+    [SerializeField] private Animator bubbleEffect;
 
     private ScoreManager scoreManager;
     
@@ -28,18 +31,22 @@ public class WordsManager : MonoBehaviour
         dictionary = Resources.Load<TextAsset>("words");
         NewRandomWord();
 
-        scoreDisplay.text = (score).ToString();
-
         timer = 5.9f;
     }
 
   void Update()
-{
-
+    {
         timerDisplay.text = ((int)timer).ToString();
+        timerSlider.fillAmount = timer / 5.9f;
         if (timer <= 0)
         {
-
+            if (score > PlayerPrefs.GetInt("HighScore", 0))
+            {
+                PlayerPrefs.SetInt("HighScore", score);
+            }
+            PlayerPrefs.SetInt("Score", score);
+            PlayerPrefs.Save();
+            SceneManager.LoadScene("GameOver");
         }
         else
         {
@@ -61,7 +68,8 @@ public class WordsManager : MonoBehaviour
                 scoreManager.AddScore(6);
                 break;
         }
-        scoreDisplay.text = score.ToString();
+        bubbleEffect.SetTrigger("Pop");
+        AudioManager.Instance.PlaySFX("UI", "Pop");
         NewRandomWord();
         timer = 5.9f;
     }
@@ -74,8 +82,7 @@ public class WordsManager : MonoBehaviour
         string randomWord = words[Random.Range(0, words.Length)].Trim();
         currentWord = randomWord;
         wordDisplay.text = paintColor.ColorWord(randomWord);
-        downDisplay.text = new string('_', randomWord.Length);
-
+        downDisplay.text = new string('-', randomWord.Length);
         switch (randomWord.Length)
         {
             case <= 4:
