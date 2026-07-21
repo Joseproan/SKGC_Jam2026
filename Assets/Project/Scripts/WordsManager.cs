@@ -13,11 +13,16 @@ public class WordsManager : MonoBehaviour
     private PaintColor paintColor;
     
     public TextMeshProUGUI wordDisplay;
+    private Animator wordAnim;
     public TextMeshProUGUI downDisplay;
     public TextMeshProUGUI timerDisplay;
     public Image timerSlider;
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private Animator bubbleEffect;
+
+    private bool wordCompleted;
+    [SerializeField] private float timeAfterCompletion = 0.5f;
+    private float completionTimer;
 
     private ScoreManager scoreManager;
     
@@ -25,6 +30,7 @@ public class WordsManager : MonoBehaviour
     {
         paintColor = this.GetComponent<PaintColor>();
         scoreManager = this.GetComponent<ScoreManager>();
+        wordAnim = wordDisplay.GetComponent<Animator>();
     }
     void Start()
     {
@@ -46,12 +52,17 @@ public class WordsManager : MonoBehaviour
         }
         else
         {
-            timer -= Time.deltaTime;
+            if (!wordCompleted)
+            {
+                timer -= Time.deltaTime;
+            }
         }
     
-    if (inputField.text.Trim().ToLower() == currentWord.ToLower())
-    {
-        inputField.text = "";
+    if (inputField.text.Trim().ToLower() == currentWord.ToLower() && !wordCompleted)
+    {        
+        inputField.DeactivateInputField();
+        wordAnim.SetTrigger("Completed");
+        wordCompleted = true;
         switch (difficulty)
         {
             case "easy":
@@ -64,10 +75,22 @@ public class WordsManager : MonoBehaviour
                 scoreManager.AddScore(6);
                 break;
         }
-        bubbleEffect.SetTrigger("Pop");
-        AudioManager.Instance.PlaySFX("UI", "Pop");
-        NewRandomWord();
-        timer = 5.9f;
+
+    }
+    if(wordCompleted)
+    {
+        completionTimer += Time.deltaTime;
+        if(completionTimer >= timeAfterCompletion)
+        {
+            wordCompleted = false;
+            completionTimer = 0f;
+
+            inputField.text = "";
+            bubbleEffect.SetTrigger("Pop");
+            AudioManager.Instance.PlaySFX("UI", "Pop");
+            NewRandomWord();
+            timer = 5.9f;
+        }
     }
 }
 
