@@ -38,14 +38,10 @@ public class WordsManager : MonoBehaviour
     {
         timerDisplay.text = ((int)timer).ToString();
         timerSlider.fillAmount = timer / 5.9f;
+        
         if (timer <= 0)
         {
-            if (score > PlayerPrefs.GetInt("HighScore", 0))
-            {
-                PlayerPrefs.SetInt("HighScore", score);
-            }
-            PlayerPrefs.SetInt("Score", score);
-            PlayerPrefs.Save();
+            scoreManager.SaveScore();
             SceneManager.LoadScene("GameOver");
         }
         else
