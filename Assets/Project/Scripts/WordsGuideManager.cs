@@ -32,10 +32,10 @@ public class WordsGuideManager : MonoBehaviour
                 ? "calc"
                 : "?";
 
-                randomText.text =
-    PlayerPrefs.GetInt("UnlockedRandom", 0) == 1
-        ? "random"
-        : "?";
+        randomText.text =
+PlayerPrefs.GetInt("UnlockedRandom", 0) == 1
+? "random"
+: "?";
 
         capsText.text =
     PlayerPrefs.GetInt("UnlockedCaps", 0) == 1
@@ -47,7 +47,16 @@ public class WordsGuideManager : MonoBehaviour
         ? "flash"
         : "?";
     }
+    void Update()
+    {
+        if (!inputField.isFocused)
+        {
+            inputField.Select();
 
+            inputField.ActivateInputField();
+
+        }
+    }
     private void OnDestroy()
     {
         inputField.onValueChanged.RemoveListener(CheckCommand);
@@ -57,9 +66,9 @@ public class WordsGuideManager : MonoBehaviour
     {
         switch (text.Trim().ToLower())
         {
-            case "mute":
+            case "menu":
                 AudioManager.mute = !AudioManager.mute;
-                inputField.text = "";
+                SceneManager.LoadScene("Menu");
                 break;
 
             case "play":
@@ -89,7 +98,7 @@ public class WordsGuideManager : MonoBehaviour
                 SceneManager.LoadScene("Game");
                 break;
 
-                            case "random":
+            case "random":
                 PlayerPrefs.SetInt(
                     "GameMode",
                     (int)GameModeType.Random
@@ -98,16 +107,16 @@ public class WordsGuideManager : MonoBehaviour
                 SceneManager.LoadScene("Game");
                 break;
 
-                case "caps":
+            case "caps":
                 PlayerPrefs.SetInt("GameMode", (int)GameModeType.Caps);
                 SceneManager.LoadScene("Game");
                 break;
 
-                case "flash":
+            case "flash":
                 PlayerPrefs.SetInt("GameMode", (int)GameModeType.Flash);
                 SceneManager.LoadScene("Game");
                 break;
-                
+
 
         }
     }

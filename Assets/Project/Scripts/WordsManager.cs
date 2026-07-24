@@ -34,6 +34,8 @@ public class WordsManager : MonoBehaviour
     private string currentChallenge;
 
     private bool flashHidden;
+
+    [SerializeField] private TextMeshProUGUI modeTitle;
 private float flashTimer;
 
     void Awake()
@@ -44,6 +46,7 @@ private float flashTimer;
     }
 void Start()
 {
+    FocusInput();
     dictionary = Resources.Load<TextAsset>("words");
     words = dictionary.text.Split('\n');
     
@@ -52,11 +55,33 @@ void Start()
 
     currentGameMode = GameModeFactory.Create(selectedMode);
 
+    UpdateModeTitle();
+
     NewRandomWord();
 }
-
+private void UpdateModeTitle()
+{
+    modeTitle.text = selectedMode switch
+    {
+        GameModeType.Normal => "COPY",
+        GameModeType.Reverse => "REVERSE",
+        GameModeType.MissingLetters => "MISSING",
+        GameModeType.Math => "CALC",
+        GameModeType.Random => "RANDOM",
+        GameModeType.Caps => "CAPS",
+        GameModeType.Flash => "FLASH",
+        _ => "COPY"
+    };
+}
  private void Update()
 {
+        if (!inputField.isFocused)
+
+    {
+
+        FocusInput();
+
+    }
     UpdateTimer();
     UpdateFlashMode();
 
@@ -74,6 +99,18 @@ if (!wordCompleted &&
     {
         UpdateCompletion();
     }
+}
+
+private void FocusInput()
+{
+    inputField.Select();
+    inputField.ActivateInputField();
+
+    int endPosition = inputField.text.Length;
+
+    inputField.caretPosition = endPosition;
+    inputField.selectionAnchorPosition = endPosition;
+    inputField.selectionFocusPosition = endPosition;
 }
 private void CompleteWord()
 {
@@ -131,8 +168,7 @@ private void NewRandomWord()
 private void UpdateTimer()
 {
     timerDisplay.text = Mathf.CeilToInt(timer).ToString();
-    timerSlider.fillAmount =
-    timer / currentGameMode.GetTime();
+timerSlider.fillAmount = timer / currentMaxTime;
 
     if (wordCompleted)
         return;
@@ -168,13 +204,13 @@ private float CalculateWordTime()
     int score = scoreManager.GetScore();
 
     // Cada 30 puntos aumenta un nivel de velocidad
-    int speedLevel = score / 30;
+    int speedLevel = score / 20;
 
     // Cada nivel deja el tiempo en un 90% del anterior
     float reducedTime =
         baseTime * Mathf.Pow(0.9f, speedLevel);
 
-    return Mathf.Max(reducedTime, 3f);
+    return Mathf.Max(reducedTime, 1.5f);
 }
 
 private void UpdateFlashMode()

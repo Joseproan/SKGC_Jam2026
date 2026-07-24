@@ -12,22 +12,43 @@ public class GameOverManager : MonoBehaviour
     [SerializeField] private GameObject newWordSection;
     [SerializeField] private TextMeshProUGUI newWordText;
 
-    private void Start()
+private void Start()
+
+{
+
+    FocusInput();
+
+    inputField.onValueChanged.AddListener(CheckCommand);
+
+    scoreText.text = PlayerPrefs.GetInt("Score", 0).ToString();
+
+    failedWordText.text = PlayerPrefs.GetString("FailedWord", "");
+
+    ShowUnlockedWord();
+
+}
+    void Update()
     {
-        inputField.Select();
-        inputField.ActivateInputField();
+    if (!inputField.isFocused)
 
-        inputField.onValueChanged.AddListener(CheckCommand);
+    {
 
-        scoreText.text =
-            PlayerPrefs.GetInt("Score", 0).ToString();
+        FocusInput();
 
-        failedWordText.text =
-            PlayerPrefs.GetString("FailedWord", "");
-
-        ShowUnlockedWord();
+    }
     }
 
+private void FocusInput()
+{
+    inputField.Select();
+    inputField.ActivateInputField();
+
+    int endPosition = inputField.text.Length;
+
+    inputField.caretPosition = endPosition;
+    inputField.selectionAnchorPosition = endPosition;
+    inputField.selectionFocusPosition = endPosition;
+}
     private void ShowUnlockedWord()
     {
         string unlockedWord =
@@ -61,6 +82,15 @@ public class GameOverManager : MonoBehaviour
                 PlayerPrefs.SetInt(
                     "GameMode",
                     (int)GameModeType.Normal
+                );
+
+                SceneManager.LoadScene("Game");
+                break;
+            
+                case "reverse":
+                PlayerPrefs.SetInt(
+                    "GameMode",
+                    (int)GameModeType.Reverse
                 );
 
                 SceneManager.LoadScene("Game");

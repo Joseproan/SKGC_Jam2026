@@ -44,68 +44,93 @@ public void SaveScore()
 
     string unlockedWord = "";
 
-if (currentMode == GameModeType.Normal)
-{
-    if (score >= 150 &&
-        PlayerPrefs.GetInt("UnlockedCaps", 0) == 0)
+    switch (currentMode)
     {
-        PlayerPrefs.SetInt("UnlockedCaps", 1);
-        unlockedWord = "caps";
+        case GameModeType.Normal:
+            unlockedWord = TryUnlock(150, "UnlockedCaps", "caps");
+
+            if (unlockedWord == "")
+                unlockedWord = TryUnlock(100, "UnlockedMath", "calc");
+
+            if (unlockedWord == "")
+                unlockedWord = TryUnlock(50, "UnlockedReverse", "reverse");
+
+            break;
+
+
+        case GameModeType.Reverse:
+            unlockedWord = TryUnlock(150, "UnlockedRandom", "random");
+
+            if (unlockedWord == "")
+                unlockedWord = TryUnlock(100, "UnlockedMath", "calc");
+
+            if (unlockedWord == "")
+                unlockedWord = TryUnlock(50, "UnlockedMissing", "missing");
+
+            break;
+
+
+        case GameModeType.Math:
+            unlockedWord = TryUnlock(150, "UnlockedRandom", "random");
+
+            if (unlockedWord == "")
+                unlockedWord = TryUnlock(100, "UnlockedMissing", "missing");
+
+            if (unlockedWord == "")
+                unlockedWord = TryUnlock(50, "UnlockedCaps", "caps");
+
+            break;
+
+
+        case GameModeType.Caps:
+            unlockedWord = TryUnlock(150, "UnlockedFlash", "flash");
+
+            if (unlockedWord == "")
+                unlockedWord = TryUnlock(100, "UnlockedRandom", "random");
+
+            if (unlockedWord == "")
+                unlockedWord = TryUnlock(50, "UnlockedMissing", "missing");
+
+            break;
+
+
+        case GameModeType.MissingLetters:
+            unlockedWord = TryUnlock(100, "UnlockedFlash", "flash");
+
+            if (unlockedWord == "")
+                unlockedWord = TryUnlock(50, "UnlockedRandom", "random");
+
+            break;
+
+
+        case GameModeType.Random:
+            unlockedWord = TryUnlock(
+                75,
+                "UnlockedFlash",
+                "flash"
+            );
+
+            break;
     }
-    else if (score >= 100 &&
-             PlayerPrefs.GetInt("UnlockedMath", 0) == 0)
-    {
-        PlayerPrefs.SetInt("UnlockedMath", 1);
-        unlockedWord = "calc";
-    }
-    else if (score >= 50 &&
-             PlayerPrefs.GetInt("UnlockedReverse", 0) == 0)
-    {
-        PlayerPrefs.SetInt("UnlockedReverse", 1);
-        unlockedWord = "reverse";
-    }
-}
-    else if (currentMode == GameModeType.Reverse)
-    {
-        if (score >= 50 &&
-            PlayerPrefs.GetInt("UnlockedMissing", 0) == 0)
-        {
-            PlayerPrefs.SetInt("UnlockedMissing", 1);
-            unlockedWord = "missing";
-        }
-    }
-    else if (currentMode == GameModeType.MissingLetters)
-{
-    if (score >= 50 &&
-        PlayerPrefs.GetInt("UnlockedRandom", 0) == 0)
-    {
-        PlayerPrefs.SetInt("UnlockedRandom", 1);
-        unlockedWord = "random";
-    }
-    else if (currentMode == GameModeType.Random)
-
-{
-
-    if (score >= 75 &&
-
-        PlayerPrefs.GetInt("UnlockedFlash", 0) == 0)
-
-    {
-
-        PlayerPrefs.SetInt("UnlockedFlash", 1);
-
-        unlockedWord = "flash";
-
-    }
-
-}
-}
 
     PlayerPrefs.SetInt("Score", score);
-
-    // Lo que GameOver mostrará como nuevo desbloqueo
     PlayerPrefs.SetString("NewUnlockedWord", unlockedWord);
-
     PlayerPrefs.Save();
+}
+private string TryUnlock(
+    int requiredScore,
+    string playerPrefsKey,
+    string displayedWord)
+{
+    if (score < requiredScore)
+        return "";
+
+    // Ya estaba desbloqueada
+    if (PlayerPrefs.GetInt(playerPrefsKey, 0) == 1)
+        return "";
+
+    PlayerPrefs.SetInt(playerPrefsKey, 1);
+
+    return displayedWord;
 }
 }
