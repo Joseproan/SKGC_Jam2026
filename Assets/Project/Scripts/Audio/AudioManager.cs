@@ -13,6 +13,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource musicSource;
 
     public GameObject sfxSourcePrefab;
+    public static bool mute;
 
 
     private void Awake()
@@ -53,29 +54,33 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySFX(string category, string name)
     {
-        SFXCategory cat = Array.Find(sfxCategories, c => c.categoryName == category);
-        if (cat == null)
+        if (!mute)
         {
-            Debug.LogWarning($"SFX Category '{category}' not found");
-            return;
+            SFXCategory cat = Array.Find(sfxCategories, c => c.categoryName == category);
+            if (cat == null)
+            {
+                Debug.LogWarning($"SFX Category '{category}' not found");
+                return;
+            }
+
+            SFX s = Array.Find(cat.sounds, x => x.name == name);
+            if (s == null)
+            {
+                Debug.LogWarning($"Sound '{name}' not found in category '{category}'");
+            }
+            else
+            {
+                var sfxSourceObj = Instantiate(sfxSourcePrefab);
+                var sfxSource = sfxSourceObj.GetComponent<AudioSource>();
+                var sfxClip = s.clips[Random.Range(0, s.clips.Length)];
+                sfxSource.pitch = Random.Range(s.minPitch, s.maxPitch);
+                sfxSource.PlayOneShot(sfxClip, s.volume);
+                Destroy(sfxSourceObj, sfxClip.length);
+            }
         }
 
-        SFX s = Array.Find(cat.sounds, x => x.name == name);
-        if (s == null)
-        {
-            Debug.LogWarning($"Sound '{name}' not found in category '{category}'");
-        }
-        else
-        {
-            var sfxSourceObj = Instantiate(sfxSourcePrefab);
-            var sfxSource = sfxSourceObj.GetComponent<AudioSource>();
-            var sfxClip = s.clips[Random.Range(0, s.clips.Length)];
-            sfxSource.pitch = Random.Range(s.minPitch, s.maxPitch);
-            sfxSource.PlayOneShot(sfxClip, s.volume);
-            Destroy(sfxSourceObj, sfxClip.length);
-        }
     }
-    
+
     public AudioSource PlaySFXAndReturn(string category, string name, bool loop = false)
     {
         SFXCategory cat = Array.Find(sfxCategories, c => c.categoryName == category);

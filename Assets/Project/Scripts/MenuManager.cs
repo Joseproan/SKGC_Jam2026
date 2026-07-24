@@ -3,17 +3,14 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameOverManager : MonoBehaviour
+public class MenuManager : MonoBehaviour
 {
     [SerializeField] private TMP_InputField inputField;
-    [SerializeField] private TextMeshProUGUI scoreText;
-    private int score;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         inputField.Select();
         inputField.ActivateInputField();
-        GetScore();
 
         inputField.onValueChanged.AddListener(CheckCommand);
     }
@@ -27,32 +24,37 @@ public class GameOverManager : MonoBehaviour
     {
         
     }
-
-    private void GetScore()
-    {
-        score = PlayerPrefs.GetInt("Score");
-        scoreText.text = score.ToString();
-        if (score > PlayerPrefs.GetInt("HighScore", 0))
-        {
-            PlayerPrefs.SetInt("HighScore", score);
-            PlayerPrefs.Save();
-        }
-    }
     private void CheckCommand(string text)
     {
         switch (text.Trim().ToLower())
         {
-            case "menu":
-                SceneManager.LoadScene("Menu");
+            case "mute":
+                AudioManager.mute = !AudioManager.mute;
+                inputField.text = "";
                 break;
 
             case "play":
+                PlayerPrefs.SetInt("GameMode", (int)GameModeType.Normal);
+                SceneManager.LoadScene("Game");
+                break;
+            case "words":
+                PlayerPrefs.SetInt("GameMode", (int)GameModeType.MissingLetters);
+                SceneManager.LoadScene("Words");
+                break;
+
+            case "reverse":
+                PlayerPrefs.SetInt("GameMode", (int)GameModeType.Reverse);
                 SceneManager.LoadScene("Game");
                 break;
 
-            case "scores":
-                SceneManager.LoadScene("Scores");
+            case "missing":
+                PlayerPrefs.SetInt("GameMode", (int)GameModeType.MissingLetters);
+                SceneManager.LoadScene("Game");
                 break;
+                
+
             }
+            }
+            
     }
-}
+

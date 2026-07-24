@@ -18,6 +18,7 @@ public class WordsManager : MonoBehaviour
     public TextMeshProUGUI timerDisplay;
     public Image timerSlider;
     [SerializeField] private TMP_InputField inputField;
+    [SerializeField] private TextMeshProUGUI inputFieldText;
     [SerializeField] private Animator bubbleEffect;
 
     private bool wordCompleted;
@@ -25,100 +26,109 @@ public class WordsManager : MonoBehaviour
     private float completionTimer;
 
     private ScoreManager scoreManager;
-    
+    private GameModeBase currentGameMode;
+    private const float DefaultTime = 5.9f;
+    private GameModeType selectedMode;
+
     void Awake()
     {
         paintColor = this.GetComponent<PaintColor>();
         scoreManager = this.GetComponent<ScoreManager>();
         wordAnim = wordDisplay.GetComponent<Animator>();
     }
-    void Start()
-    {
-        dictionary = Resources.Load<TextAsset>("words");
-        NewRandomWord();
-
-        timer = 5.9f;
-    }
-
-  void Update()
-    {
-        timerDisplay.text = ((int)timer).ToString();
-        timerSlider.fillAmount = timer / 5.9f;
-        
-        if (timer <= 0)
-        {
-            scoreManager.SaveScore();
-            SceneManager.LoadScene("GameOver");
-        }
-        else
-        {
-            if (!wordCompleted)
-            {
-                timer -= Time.deltaTime;
-            }
-        }
+void Start()
+{
+    dictionary = Resources.Load<TextAsset>("words");
+    words = dictionary.text.Split('\n');
     
-    if (inputField.text.Trim().ToLower() == currentWord.ToLower() && !wordCompleted)
-    {        
-        inputField.DeactivateInputField();
-        wordAnim.SetTrigger("Completed");
-        wordCompleted = true;
-        switch (difficulty)
-        {
-            case "easy":
-                scoreManager.AddScore(1);
-                break;
-            case "medium":
-                scoreManager.AddScore(3);
-                break;
-            case "hard":
-                scoreManager.AddScore(6);
-                break;
-        }
+    
+    selectedMode = (GameModeType)PlayerPrefs.GetInt("GameMode");
 
-    }
-    if(wordCompleted)
+    currentGameMode = GameModeFactory.Create(selectedMode);
+
+    NewRandomWord();
+}
+
+ private void Update()
+{
+    UpdateTimer();
+
+    if (!wordCompleted &&
+        currentGameMode.IsCorrect(inputField.text, currentWord))
     {
-        completionTimer += Time.deltaTime;
-        if(completionTimer >= timeAfterCompletion)
-        {
-            wordCompleted = false;
-            completionTimer = 0f;
+        CompleteWord();
+    }
 
-            inputField.text = "";
-            bubbleEffect.SetTrigger("Pop");
-            AudioManager.Instance.PlaySFX("UI", "Pop");
-            NewRandomWord();
-            timer = 5.9f;
-        }
+    if (wordCompleted)
+    {
+        UpdateCompletion();
+    }
+}
+private void CompleteWord()
+{
+    inputFieldText.color = Color.green;
+    AudioManager.Instance.PlaySFX("UI", "Pop");
+
+    inputField.DeactivateInputField();
+
+    wordAnim.SetTrigger("Completed");
+
+    wordCompleted = true;
+
+    int points = currentGameMode.GetScore(currentWord);
+
+    scoreManager.AddScore(points);
+}
+private void NewRandomWord()
+{
+    inputFieldText.color = Color.black;
+    currentWord = words[Random.Range(0, words.Length)].Trim();
+
+    string displayedWord =
+        currentGameMode.GetDisplayedWord(currentWord);
+
+    wordDisplay.text =
+        paintColor.ColorWord(displayedWord);
+
+    downDisplay.text =
+        new string('-', currentWord.Length);
+
+    timer = currentGameMode.GetTime();
+
+    inputField.text = "";
+    inputField.Select();
+    inputField.ActivateInputField();
+}
+
+
+private void UpdateTimer()
+{
+    timerDisplay.text = Mathf.CeilToInt(timer).ToString();
+    timerSlider.fillAmount = timer / currentGameMode.GetTime();
+
+    if (wordCompleted)
+        return;
+
+    timer -= Time.deltaTime;
+
+    if (timer <= 0)
+    {
+        scoreManager.SaveScore();
+        SceneManager.LoadScene("GameOver");
     }
 }
 
-    public void NewRandomWord()
-    {
-        words = dictionary.text.Split('\n');
+private void UpdateCompletion()
+{
+    completionTimer += Time.deltaTime;
 
-        string randomWord = words[Random.Range(0, words.Length)].Trim();
-        currentWord = randomWord;
-        wordDisplay.text = paintColor.ColorWord(randomWord);
-        downDisplay.text = new string('-', randomWord.Length);
-        switch (randomWord.Length)
-        {
-            case <= 4:
-            difficulty = "easy";
-            break;
-            case <= 9:
-                difficulty = "medium";
-                break;
-            case > 9:
-                difficulty = "hard";
-                break;
-        }
-        inputField.Select();
-        inputField.ActivateInputField();
-    }
+    if (completionTimer < timeAfterCompletion)
+        return;
 
+    wordCompleted = false;
+    completionTimer = 0f;
 
-
+    NewRandomWord();
+}
 
 }
