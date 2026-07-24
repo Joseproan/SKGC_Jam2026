@@ -21,6 +21,10 @@ public class ScoreManager : MonoBehaviour
         scoreDisplay.text = "0";
     }
 
+public int GetScore()
+{
+    return score;
+}
     public void AddScore(int points)
     {
         score += points;

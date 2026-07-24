@@ -9,6 +9,6 @@ public class NormalMode : GameModeBase
 
         public override float GetTime()
     {
-        return 3f;
+        return 5.9f;
     }
 }

@@ -30,6 +30,7 @@ public class WordsManager : MonoBehaviour
     private const float DefaultTime = 5.9f;
     private GameModeType selectedMode;
     private string failedWord;
+    private float currentMaxTime;
 
     void Awake()
     {
@@ -94,7 +95,8 @@ private void NewRandomWord()
     downDisplay.text =
         new string('-', currentWord.Length);
 
-    timer = currentGameMode.GetTime();
+    currentMaxTime = CalculateWordTime();
+    timer = currentMaxTime;
 
     inputField.text = "";
     inputField.Select();
@@ -105,7 +107,8 @@ private void NewRandomWord()
 private void UpdateTimer()
 {
     timerDisplay.text = Mathf.CeilToInt(timer).ToString();
-    timerSlider.fillAmount = timer / currentGameMode.GetTime();
+    timerSlider.fillAmount =
+    timer / currentGameMode.GetTime();
 
     if (wordCompleted)
         return;
@@ -132,6 +135,22 @@ private void UpdateCompletion()
     completionTimer = 0f;
 
     NewRandomWord();
+}
+
+private float CalculateWordTime()
+{
+    float baseTime = currentGameMode.GetTime();
+
+    int score = scoreManager.GetScore();
+
+    // Cada 30 puntos aumenta un nivel de velocidad
+    int speedLevel = score / 30;
+
+    // Cada nivel deja el tiempo en un 90% del anterior
+    float reducedTime =
+        baseTime * Mathf.Pow(0.9f, speedLevel);
+
+    return Mathf.Max(reducedTime, 3f);
 }
 
 }
