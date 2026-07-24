@@ -203,7 +203,7 @@ GameObject:
   - component: {fileID: 57647852}
   - component: {fileID: 57647851}
   m_Layer: 5
-  m_Name: 1 (8)
+  m_Name: caps
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -611,7 +611,7 @@ GameObject:
   - component: {fileID: 281186393}
   - component: {fileID: 281186392}
   m_Layer: 5
-  m_Name: 1 (6)
+  m_Name: calc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -742,7 +742,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '?'
+  m_text: missing
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ac1292ba0abbd472c925363c768b60ee, type: 2}
   m_sharedMaterial: {fileID: -1200971172817412723, guid: ac1292ba0abbd472c925363c768b60ee, type: 2}
@@ -1501,7 +1501,7 @@ GameObject:
   - component: {fileID: 760857677}
   - component: {fileID: 760857676}
   m_Layer: 5
-  m_Name: 1 (7)
+  m_Name: random
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1855,7 +1855,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '?'
+  m_text: reverse
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ac1292ba0abbd472c925363c768b60ee, type: 2}
   m_sharedMaterial: {fileID: -1200971172817412723, guid: ac1292ba0abbd472c925363c768b60ee, type: 2}
@@ -2177,7 +2177,7 @@ GameObject:
   - component: {fileID: 1156437083}
   - component: {fileID: 1156437082}
   m_Layer: 5
-  m_Name: 1 (9)
+  m_Name: flash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3028,6 +3028,10 @@ MonoBehaviour:
   inputField: {fileID: 193733825}
   reverseText: {fileID: 885117243}
   missingText: {fileID: 422542722}
+  mathText: {fileID: 1858346896}
+  randomText: {fileID: 1194970029}
+  capsText: {fileID: 744353919}
+  flashText: {fileID: 1905584674}
 --- !u!1 &1858346893
 GameObject:
   m_ObjectHideFlags: 0
@@ -3098,7 +3102,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '?'
+  m_text: calc
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ac1292ba0abbd472c925363c768b60ee, type: 2}
   m_sharedMaterial: {fileID: -1200971172817412723, guid: ac1292ba0abbd472c925363c768b60ee, type: 2}

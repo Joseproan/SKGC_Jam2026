@@ -69,6 +69,33 @@ public class GameOverManager : MonoBehaviour
             case "words":
                 SceneManager.LoadScene("Words");
                 break;
+            case "calc":
+                PlayerPrefs.SetInt(
+                    "GameMode",
+                    (int)GameModeType.Math
+                );
+
+                SceneManager.LoadScene("Game");
+                break;
+            case "random":
+                PlayerPrefs.SetInt(
+                    "GameMode",
+                    (int)GameModeType.Random
+                );
+
+                SceneManager.LoadScene("Game");
+                break;
+
+                case "caps":
+                PlayerPrefs.SetInt("GameMode", (int)GameModeType.Caps);
+                SceneManager.LoadScene("Game");
+                break;
+
+
+                case "flash":
+                PlayerPrefs.SetInt("GameMode", (int)GameModeType.Flash);
+                SceneManager.LoadScene("Game");
+                break;
         }
     }
 }

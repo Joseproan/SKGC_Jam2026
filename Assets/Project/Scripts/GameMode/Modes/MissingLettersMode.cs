@@ -17,6 +17,6 @@ public class MissingLettersMode : GameModeBase
 
     public override float GetTime()
     {
-        return 15f;
+        return 16.9f;
     }
 }

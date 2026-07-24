@@ -11,4 +11,9 @@ public class NormalMode : GameModeBase
     {
         return 5.9f;
     }
+
+        public override int GetScore(string word)
+    {
+        return base.GetScore(word) + 3;
+    }
 }

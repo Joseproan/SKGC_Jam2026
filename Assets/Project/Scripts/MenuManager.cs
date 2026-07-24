@@ -13,8 +13,7 @@ public class MenuManager : MonoBehaviour
         inputField.ActivateInputField();
 
         inputField.onValueChanged.AddListener(CheckCommand);
-        PlayerPrefs.DeleteAll();
-PlayerPrefs.Save();
+
     }
 
     private void OnDestroy()
@@ -24,7 +23,7 @@ PlayerPrefs.Save();
     // Update is called once per frame
     void Update()
     {
-        
+
     }
     private void CheckCommand(string text)
     {
@@ -53,10 +52,35 @@ PlayerPrefs.Save();
                 PlayerPrefs.SetInt("GameMode", (int)GameModeType.MissingLetters);
                 SceneManager.LoadScene("Game");
                 break;
-                
+            case "calc":
+                PlayerPrefs.SetInt(
+                    "GameMode",
+                    (int)GameModeType.Math
+                );
+                SceneManager.LoadScene("Game");
+                break;
+            case "random":
+                PlayerPrefs.SetInt(
+                    "GameMode",
+                    (int)GameModeType.Random
+                );
 
-            }
-            }
-            
+                SceneManager.LoadScene("Game");
+                break;
+
+                                case "caps":
+                PlayerPrefs.SetInt("GameMode", (int)GameModeType.Caps);
+                SceneManager.LoadScene("Game");
+                break;
+
+
+                case "flash":
+                PlayerPrefs.SetInt("GameMode", (int)GameModeType.Flash);
+                SceneManager.LoadScene("Game");
+                break;
+
+        }
     }
+
+}
 

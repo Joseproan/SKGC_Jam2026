@@ -1,5 +1,3 @@
-using UnityEngine;
-
 public static class GameModeFactory
 {
     public static GameModeBase Create(GameModeType modeType)
@@ -8,7 +6,12 @@ public static class GameModeFactory
         {
             GameModeType.Reverse => new ReverseMode(),
             GameModeType.MissingLetters => new MissingLettersMode(),
-            _ => new NormalMode()
+            GameModeType.Math => new MathMode(),
+            GameModeType.Caps => new CapsMode(),
+            GameModeType.Flash => new FlashMode(),
+            GameModeType.Random => new RandomMode(),
+            _ => new NormalMode(),
+
         };
     }
 }

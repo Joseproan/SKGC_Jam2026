@@ -2,5 +2,9 @@ public enum GameModeType
 {
     Normal,
     Reverse,
-    MissingLetters
+    MissingLetters,
+    Math,
+    Random,
+    Caps,
+    Flash
 }

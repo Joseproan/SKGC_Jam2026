@@ -31,6 +31,10 @@ public class WordsManager : MonoBehaviour
     private GameModeType selectedMode;
     private string failedWord;
     private float currentMaxTime;
+    private string currentChallenge;
+
+    private bool flashHidden;
+private float flashTimer;
 
     void Awake()
     {
@@ -54,12 +58,17 @@ void Start()
  private void Update()
 {
     UpdateTimer();
+    UpdateFlashMode();
 
-    if (!wordCompleted &&
-        currentGameMode.IsCorrect(inputField.text, currentWord))
-    {
-        CompleteWord();
-    }
+if (!wordCompleted &&
+
+    currentGameMode.IsCorrect(inputField.text, currentWord))
+
+{
+
+    CompleteWord();
+
+}
 
     if (wordCompleted)
     {
@@ -84,16 +93,31 @@ private void CompleteWord()
 private void NewRandomWord()
 {
     inputFieldText.color = Color.black;
-    currentWord = words[Random.Range(0, words.Length)].Trim();
 
-    string displayedWord =
+    currentWord =
+        words[Random.Range(0, words.Length)].Trim();
+
+    currentChallenge =
         currentGameMode.GetDisplayedWord(currentWord);
 
     wordDisplay.text =
-        paintColor.ColorWord(displayedWord);
+        paintColor.ColorWord(currentChallenge);
 
-    downDisplay.text =
-        new string('-', currentWord.Length);
+        if (currentGameMode is FlashMode flashMode)
+{
+    flashHidden = false;
+    flashTimer = flashMode.VisibleTime;
+}
+
+    if (selectedMode == GameModeType.Math)
+    {
+        downDisplay.text = "";
+    }
+    else
+    {
+        downDisplay.text =
+            new string('-', currentWord.Length);
+    }
 
     currentMaxTime = CalculateWordTime();
     timer = currentMaxTime;
@@ -117,7 +141,7 @@ private void UpdateTimer()
 
     if (timer <= 0)
     {
-        failedWord = currentWord;
+        failedWord = currentChallenge;
         PlayerPrefs.SetString("FailedWord", failedWord);
         scoreManager.SaveScore();
         SceneManager.LoadScene("GameOver");
@@ -151,6 +175,25 @@ private float CalculateWordTime()
         baseTime * Mathf.Pow(0.9f, speedLevel);
 
     return Mathf.Max(reducedTime, 3f);
+}
+
+private void UpdateFlashMode()
+{
+    if (!(currentGameMode is FlashMode))
+        return;
+
+    if (flashHidden)
+        return;
+
+    flashTimer -= Time.deltaTime;
+
+    if (flashTimer <= 0)
+    {
+        flashHidden = true;
+
+        wordDisplay.text =
+            new string('-', currentWord.Length);
+    }
 }
 
 }
