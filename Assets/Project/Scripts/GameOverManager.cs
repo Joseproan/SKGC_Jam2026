@@ -1,45 +1,54 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class GameOverManager : MonoBehaviour
 {
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI failedWordText;
-    private int score;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    [Header("Nueva palabra")]
+    [SerializeField] private GameObject newWordSection;
+    [SerializeField] private TextMeshProUGUI newWordText;
+
+    private void Start()
     {
         inputField.Select();
         inputField.ActivateInputField();
-        GetScore();
 
         inputField.onValueChanged.AddListener(CheckCommand);
-        failedWordText.text = PlayerPrefs.GetString("FailedWord");
+
+        scoreText.text =
+            PlayerPrefs.GetInt("Score", 0).ToString();
+
+        failedWordText.text =
+            PlayerPrefs.GetString("FailedWord", "");
+
+        ShowUnlockedWord();
+    }
+
+    private void ShowUnlockedWord()
+    {
+        string unlockedWord =
+            PlayerPrefs.GetString("NewUnlockedWord", "");
+
+        bool unlockedSomething =
+            unlockedWord != "";
+
+        newWordSection.SetActive(unlockedSomething);
+
+        if (unlockedSomething)
+        {
+            newWordText.text = unlockedWord;
+        }
     }
 
     private void OnDestroy()
     {
         inputField.onValueChanged.RemoveListener(CheckCommand);
     }
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
-    private void GetScore()
-    {
-        score = PlayerPrefs.GetInt("Score");
-        scoreText.text = score.ToString();
-        if (score > PlayerPrefs.GetInt("HighScore", 0))
-        {
-            PlayerPrefs.SetInt("HighScore", score);
-            PlayerPrefs.Save();
-        }
-    }
     private void CheckCommand(string text)
     {
         switch (text.Trim().ToLower())
@@ -49,12 +58,17 @@ public class GameOverManager : MonoBehaviour
                 break;
 
             case "play":
+                PlayerPrefs.SetInt(
+                    "GameMode",
+                    (int)GameModeType.Normal
+                );
+
                 SceneManager.LoadScene("Game");
                 break;
 
-            case "scores":
-                SceneManager.LoadScene("Scores");
+            case "words":
+                SceneManager.LoadScene("Words");
                 break;
-            }
+        }
     }
 }

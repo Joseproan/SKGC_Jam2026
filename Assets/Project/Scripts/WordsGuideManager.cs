@@ -1,32 +1,37 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
-public class MenuManager : MonoBehaviour
+public class WordsGuideManager : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField inputField;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+        [SerializeField] private TMP_InputField inputField;
+    [SerializeField] private TextMeshProUGUI reverseText;
+    [SerializeField] private TextMeshProUGUI missingText;
+
+    private void Start()
     {
-        inputField.Select();
+                inputField.Select();
         inputField.ActivateInputField();
 
         inputField.onValueChanged.AddListener(CheckCommand);
-        PlayerPrefs.DeleteAll();
-PlayerPrefs.Save();
+
+        reverseText.text =
+            PlayerPrefs.GetInt("UnlockedReverse", 0) == 1
+                ? "reverse"
+                : "?";
+
+        missingText.text =
+            PlayerPrefs.GetInt("UnlockedMissing", 0) == 1
+                ? "missing"
+                : "?";
     }
 
-    private void OnDestroy()
+        private void OnDestroy()
     {
         inputField.onValueChanged.RemoveListener(CheckCommand);
     }
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    private void CheckCommand(string text)
+
+        private void CheckCommand(string text)
     {
         switch (text.Trim().ToLower())
         {
@@ -57,6 +62,4 @@ PlayerPrefs.Save();
 
             }
             }
-            
-    }
-
+}
