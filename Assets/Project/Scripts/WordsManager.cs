@@ -29,6 +29,7 @@ public class WordsManager : MonoBehaviour
     private GameModeBase currentGameMode;
     private const float DefaultTime = 5.9f;
     private GameModeType selectedMode;
+    private string failedWord;
 
     void Awake()
     {
@@ -113,6 +114,8 @@ private void UpdateTimer()
 
     if (timer <= 0)
     {
+        failedWord = currentWord;
+        PlayerPrefs.SetString("FailedWord", failedWord);
         scoreManager.SaveScore();
         SceneManager.LoadScene("GameOver");
     }

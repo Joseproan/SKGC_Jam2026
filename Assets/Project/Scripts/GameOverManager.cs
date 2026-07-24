@@ -7,6 +7,7 @@ public class GameOverManager : MonoBehaviour
 {
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI failedWordText;
     private int score;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -16,6 +17,7 @@ public class GameOverManager : MonoBehaviour
         GetScore();
 
         inputField.onValueChanged.AddListener(CheckCommand);
+        failedWordText.text = PlayerPrefs.GetString("FailedWord");
     }
 
     private void OnDestroy()
